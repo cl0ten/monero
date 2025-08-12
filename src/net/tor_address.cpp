@@ -1,5 +1,4 @@
 // Copyright (c) 2018-2024, The Monero Project
-
 //
 // All rights reserved.
 //
@@ -45,7 +44,8 @@ namespace net
 {
     namespace
     {
-        constexpr const char tld[] = u8".anon";
+        constexpr const char tld_onion[] = u8".onion";
+        constexpr const char tld_anon[]  = u8".anon";
         constexpr const char unknown_host[] = "<unknown tor host>";
 
         constexpr const unsigned v3_length = 56;
@@ -55,10 +55,12 @@ namespace net
 
         expect<void> host_check(boost::string_ref host) noexcept
         {
-            if (!host.ends_with(tld))
+            if (host.ends_with(tld_onion))
+                host.remove_suffix(sizeof(tld_onion) - 1);
+            else if (host.ends_with(tld_anon))
+                host.remove_suffix(sizeof(tld_anon) - 1);
+            else
                 return {net::error::expected_tld};
-
-            host.remove_suffix(sizeof(tld) - 1);
 
             //! \TODO v3 has checksum, base32 decoding is required to verify it
             if (host.size() != v3_length)
@@ -117,7 +119,11 @@ namespace net
         if (!port.empty() && !epee::string_tools::get_xtype_from_string(porti, std::string{port}))
             return {net::error::invalid_port};
 
-        static_assert(v3_length + sizeof(tld) == sizeof(tor_address::host_), "bad internal host size");
+        static_assert(
+            v3_length + sizeof(tld_onion) == sizeof(tor_address::host_) ||
+            v3_length + sizeof(tld_anon)  == sizeof(tor_address::host_),
+            "bad internal host size"
+        );
         return tor_address{host, porti};
     }
 
