@@ -48,8 +48,7 @@ namespace net
 {
     namespace
     {
-        constexpr const char tld_onion[] = u8".onion";
-        constexpr const char tld_anon[]  = u8".anon";
+        constexpr const char tld[] = u8".anon";
         constexpr const char unknown_host[] = "<unknown tor host>";
 
         constexpr const unsigned v3_length = 56;
