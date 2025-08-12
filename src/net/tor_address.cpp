@@ -27,6 +27,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
+// notes: trying to add support 
+
 #include "tor_address.h"
 
 #include <algorithm>
@@ -45,7 +48,7 @@ namespace net
 {
     namespace
     {
-        constexpr const char tld[] = u8".onion";
+        constexpr const char tld[] = u8".anon";
         constexpr const char unknown_host[] = "<unknown tor host>";
 
         constexpr const unsigned v3_length = 56;
