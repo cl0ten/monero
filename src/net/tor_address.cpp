@@ -27,9 +27,6 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-// notes: trying to add support 
-
 #include "tor_address.h"
 
 #include <algorithm>
@@ -58,15 +55,10 @@ namespace net
 
         expect<void> host_check(boost::string_ref host) noexcept
         {
+            if (!host.ends_with(tld))
+                return {net::error::expected_tld};
 
-        if (host.ends_with(tld_onion)) {
-            host.remove_suffix(sizeof(tld_onion) - 1);
-        } else if (host.ends_with(tld_anon)) {
-            host.remove_suffix(sizeof(tld_anon) - 1);
-        } else {
-            return {net::error::expected_tld};
-        }
-
+            host.remove_suffix(sizeof(tld) - 1);
 
             //! \TODO v3 has checksum, base32 decoding is required to verify it
             if (host.size() != v3_length)
