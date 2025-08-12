@@ -48,7 +48,8 @@ namespace net
 {
     namespace
     {
-        constexpr const char tld[] = u8".anon";
+        constexpr const char tld_onion[] = u8".onion";
+        constexpr const char tld_anon[]  = u8".anon";
         constexpr const char unknown_host[] = "<unknown tor host>";
 
         constexpr const unsigned v3_length = 56;
@@ -58,10 +59,15 @@ namespace net
 
         expect<void> host_check(boost::string_ref host) noexcept
         {
-            if (!host.ends_with(tld))
-                return {net::error::expected_tld};
 
-            host.remove_suffix(sizeof(tld) - 1);
+        if (host.ends_with(tld_onion)) {
+            host.remove_suffix(sizeof(tld_onion) - 1);
+        } else if (host.ends_with(tld_anon)) {
+            host.remove_suffix(sizeof(tld_anon) - 1);
+        } else {
+            return {net::error::expected_tld};
+        }
+
 
             //! \TODO v3 has checksum, base32 decoding is required to verify it
             if (host.size() != v3_length)
